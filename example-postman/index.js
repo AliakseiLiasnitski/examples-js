@@ -42,6 +42,7 @@ hasSkipRPFlag
   : newman.run(
       {
         collection: './collections/Example.postman_collection.json',
+        environment,
         reporters: '@reportportal/agent-js-postman',
         reporter: {
           '@reportportal/agent-js-postman': {
@@ -50,7 +51,6 @@ hasSkipRPFlag
             launch: process.env.RP_LAUNCH_NAME || 'LAUNCH_NAME',
             project: process.env.RP_PROJECT_NAME || 'PROJECT_NAME',
             description: 'PROJECT_DESCRIPTION',
-            environment,
             attributes: [
               {
                 key: 'attributeKey',
