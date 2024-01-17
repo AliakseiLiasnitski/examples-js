@@ -11,15 +11,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: postman-tests-pipeline
+name: postman-tests-with-rp-pipeline
 
 on:
   push:
     paths:
-      - example-postman
-    paths-ignore:
-      - README.md
-      - CHANGELOG.md
+      - example-postman/**
+      - '!example-postman/CHANGELOG.md'
   pull_request:
     branches:
       - develop
@@ -46,5 +44,10 @@ jobs:
       - name: Install of node dependencies
         run: npm install
 
-      - name: Run tests
+      - name: Run tests with RP
         run: npm test
+        env:
+          RP_ENDPOINT: ${{ secrets.RP_ENDPOINT }}
+          RP_API_KEY: ${{ secrets.RP_API_KEY }}
+          RP_PROJECT_NAME: ${{ secrets.RP_PROJECT_NAME }}
+          RP_LAUNCH_NAME: ${{ secrets.RP_LAUNCH_NAME }}
