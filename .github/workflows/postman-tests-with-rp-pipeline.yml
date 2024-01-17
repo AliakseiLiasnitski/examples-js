@@ -19,17 +19,10 @@ on:
       - example-postman/**
       - .github/workflows/postman-tests-with-rp-pipeline.yml
       - '!example-postman/CHANGELOG.md'
-  pull_request:
-    branches:
-      - develop
-      - master
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: [10, 12, 14, 16, 18, 20]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -37,7 +30,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node }}
+          node-version: 20
 
       - name: Install of node dependencies
         working-directory: ./example-postman
