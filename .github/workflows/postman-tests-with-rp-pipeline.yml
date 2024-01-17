@@ -44,3 +44,8 @@ jobs:
           RP_API_KEY: ${{ secrets.RP_API_KEY }}
           RP_PROJECT_NAME: ${{ secrets.RP_PROJECT_NAME }}
           RP_LAUNCH_NAME: ${{ secrets.RP_LAUNCH_NAME }}
+          TEST_USER_NAME: ${{ secrets.TEST_USER_NAME }}
+          TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+          TEST_URL: ${{ secrets.TEST_URL }}
+          TEST_HOST: ${{ secrets.TEST_HOST }}
+          TEST_PORT: ${{ secrets.TEST_PORT }}

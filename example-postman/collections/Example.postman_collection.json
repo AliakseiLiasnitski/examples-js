@@ -1,174 +1,5212 @@
 {
 	"info": {
-		"_postman_id": "2bf4fbe8-8728-439c-a849-897e44576bbf",
-		"name": "Suite",
-		"description": "Description for the suite",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"_postman_id": "b5dcb6b5-0ea0-464f-8d41-57fc273facf8",
+		"name": "RP Regression Postman API Tests Copy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18396793"
 	},
 	"item": [
 		{
-			"name": "Test One",
-			"event": [
+			"name": "✅  Demo data",
+			"item": [
 				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Test, status code is 200\", function () {\r",
-							"    pm.variables.set(\"rp.testCaseId\", \"testCaseIdForTestOneStepOne\");\r",
-							"    pm.variables.set(\"rp.status\", \"skipped\");\r",
-							"    pm.response.to.have.status(200);\r",
-							"});\r",
-							"pm.test(\"Test, status code is 400\", function () {\r",
-							"    pm.variables.set(\"rp.testCaseId\", \"testCaseIdForTestOneStepTwo\");\r",
-							"    pm.variables.set(\"rp.status\", \"failed\");\r",
-							"    pm.response.to.have.status(200);\r",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				},
-				{
-					"listen": "prerequest",
-					"script": {
-						"exec": [
-							"pm.environment.set(\"rp.attributes\", \"testOneKey:testOneValue;testOneValue2\");\r",
-							"pm.environment.set(\"rp.testCaseId\", \"TestOneTestCaseId\");\r",
-							"pm.environment.set(\"rp.status\", \"skipped\");\r",
-							"console.log('test', 'LOG');\r",
-							"console.info('test', 'INFO log');\r",
-							"console.debug('test', 'DEBUG log');\r",
-							"console.error('test', 'ERROR log');\r",
-							"console.warn('test', 'WARN log');\r"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://learn.javascript.ru?attr=1234",
-					"protocol": "https",
-					"host": [
-						"learn",
-						"javascript",
-						"ru"
-					],
-					"query": [
+					"name": "Preconditions",
+					"item": [
 						{
-							"key": "attr",
-							"value": "1234"
+							"name": "Generate token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsonData = pm.response.json();",
+											"let tokenAccess = jsonData.access_token;",
+											"",
+											"pm.environment.set(\"token\", tokenAccess);",
+											"pm.test(\"Generate token\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic dWk6dWltYW4="
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "grant_type",
+											"value": "password",
+											"type": "text"
+										},
+										{
+											"key": "username",
+											"value": "{{username}}",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "{{admin.password}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}/uat/sso/oauth/token",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"uat",
+										"sso",
+										"oauth",
+										"token"
+									]
+								}
+							},
+							"response": []
 						},
 						{
-							"key": "collection_tries",
-							"value": "2",
-							"disabled": true
+							"name": "Create project",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsonData = pm.response.json();",
+											"let project_id = jsonData.id;",
+											"",
+											"pm.environment.set('projectId', project_id);",
+											"pm.test(\"Create project\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "",
+										"type": "text",
+										"value": "",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"entryType\": \"INTERNAL\",\n  \"projectName\": \"{{nameProject}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/project",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"project"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get project",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get project\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"var jsonData = JSON.parse(responseBody);",
+											"postman.setEnvironmentVariable(\"project_name\", jsonData.content[0].projectName);",
+											"var jsonData = JSON.parse(responseBody);",
+											"postman.setEnvironmentVariable(\"projectId\", jsonData.content[0].id);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "",
+										"type": "text",
+										"value": "",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/project/list?filter.eq.id={{projectId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"project",
+										"list"
+									],
+									"query": [
+										{
+											"key": "filter.eq.id",
+											"value": "{{projectId}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create user (Admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Create user Admin\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"let jsonData = pm.response.json();",
+											"pm.environment.set(\"user_Admin_login\",jsonData.login)",
+											"console.log(\"jsonData\",jsonData)",
+											"pm.environment.set(\"user_Admin_id\",jsonData.id)"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const adminPassword = Math.trunc(Math.random() * 100000000)\r",
+											"pm.globals.set (\"adminPassword\", adminPassword)\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "",
+										"type": "text",
+										"value": "",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"accountRole\": \"ADMINISTRATOR\",\n  \"defaultProject\": \"{{project_name}}\",\n  \"email\": \"{{email}}\",\n  \"fullName\": \"{{fullName}}\",\n  \"login\": \"{{login}}\",\n  \"password\": \"{{adminPassword}}\",\n  \"projectRole\": \"project_manager\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/user",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Generate token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsonData = pm.response.json();",
+											"let tokenAccess = jsonData.access_token;",
+											"",
+											"pm.environment.set(\"tokenAdmin\", tokenAccess);",
+											"pm.test(\"Generate token\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic dWk6dWltYW4="
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "grant_type",
+											"value": "password",
+											"type": "text"
+										},
+										{
+											"key": "username",
+											"value": "{{user_Admin_login}}",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "{{adminPassword}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}/uat/sso/oauth/token",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"uat",
+										"sso",
+										"oauth",
+										"token"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create user (PM)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Create user PM\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"let jsonData = pm.response.json();",
+											"pm.environment.set(\"user_PM_login\",jsonData.login)",
+											"console.log(\"jsonData\",jsonData)",
+											"pm.environment.set(\"user_PM_id\",jsonData.id)"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"setTimeout(function(){}, 1500);\r",
+											"const PmPassword = Math.trunc(Math.random() * 100000000)\r",
+											"pm.globals.set (\"PmPassword\", PmPassword)\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "",
+										"type": "text",
+										"value": "",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"accountRole\": \"USER\",\n  \"defaultProject\": \"{{project_name}}\",\n  \"email\": \"{{email}}\",\n  \"fullName\": \"{{fullName}}\",\n  \"login\": \"{{login}}\",\n  \"password\": \"{{PmPassword}}\",\n  \"projectRole\": \"project_manager\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/user",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Generate token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsonData = pm.response.json();",
+											"let tokenAccess = jsonData.access_token;",
+											"",
+											"pm.environment.set(\"tokenPM\", tokenAccess);",
+											"pm.test(\"Generate token\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic dWk6dWltYW4="
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "grant_type",
+											"value": "password",
+											"type": "text"
+										},
+										{
+											"key": "username",
+											"value": "{{user_PM_login}}",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "{{PmPassword}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}/uat/sso/oauth/token",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"uat",
+										"sso",
+										"oauth",
+										"token"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create user (Member)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Create user (Member)\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"let jsonData = pm.response.json();",
+											"pm.environment.set(\"user_member_login\",jsonData.login)",
+											"console.log(\"jsonData\",jsonData)",
+											"pm.environment.set(\"user_member_id\",jsonData.id)"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"setTimeout(function(){}, 1500);\r",
+											"const MemberPassword = Math.trunc(Math.random() * 100000000)\r",
+											"pm.globals.set (\"MemberPassword\", MemberPassword)\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "",
+										"type": "text",
+										"value": "",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"accountRole\": \"USER\",\n  \"defaultProject\": \"{{project_name}}\",\n  \"email\": \"{{email}}\",\n  \"fullName\": \"{{fullName}}\",\n  \"login\": \"{{login}}\",\n  \"password\": \"{{MemberPassword}}\",\n  \"projectRole\": \"member\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/user",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Generate token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsonData = pm.response.json();",
+											"let tokenAccess = jsonData.access_token;",
+											"",
+											"pm.environment.set(\"tokenMember\", tokenAccess);",
+											"pm.test(\"Generate token\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic dWk6dWltYW4="
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "grant_type",
+											"value": "password",
+											"type": "text"
+										},
+										{
+											"key": "username",
+											"value": "{{user_member_login}}",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "{{MemberPassword}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}/uat/sso/oauth/token",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"uat",
+										"sso",
+										"oauth",
+										"token"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set('nameProject','project_{{$timestamp}}');",
+									"pm.environment.set('email','user_{{$timestamp}}@gmail.com');",
+									"pm.environment.set('fullName', 'fullName_{{$timestamp}} ');",
+									"pm.environment.set('login','user_{{$timestamp}}');"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
 						}
 					]
 				},
-				"description": "Description for test one"
-			},
-			"response": []
-		},
-		{
-			"name": "Test Two",
+				{
+					"name": "Generate demo data. Permissions+ verify generated data",
+					"item": [
+						{
+							"name": "Generate demo data as Admin",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Generate demo data as Admin\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"var jsonData = JSON.parse(responseBody);",
+											"pm.environment.set(\"demoDashboardId\", jsonData.dashboardId);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{}"
+								},
+								"url": {
+									"raw": "{{url}}/demo/{{project_name}}/generate",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"demo",
+										"{{project_name}}",
+										"generate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo launches after demo data generation by Admin",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo launches after demo data generation by Admin\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"5 launches are generated by demo data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.content.length).to.eql(5);",
+											"    });",
+											"    var jsonData = JSON.parse(responseBody);",
+											"pm.environment.set(\"demoLaunchId\", jsonData.content[0].id);",
+											"pm.environment.set(\"demoLaunchId2\", jsonData.content[1].id);",
+											"pm.environment.set(\"demoLaunchId3\", jsonData.content[2].id);",
+											"pm.environment.set(\"demoLaunchId4\", jsonData.content[3].id);",
+											"pm.environment.set(\"demoLaunchId5\", jsonData.content[4].id);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/{{project_name}}/launch",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"launch"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo dashboard after demo data generation by Admin",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get shared demo dashboard after demo data generation by Admin\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"1 dashboard is generated by demo data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.content.length).to.eql(1);",
+											"    });",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo widgets after demo data generation by Admin",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo widgets after demo data generation by Admin\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"12 widgets are generated by demo data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.content[0].widgets.length).to.eql(12);",
+											"    });",
+											" var jsonData = JSON.parse(responseBody);",
+											"pm.environment.set(\"demoWidgetId\", jsonData.content[0].widgets[0].widgetId);",
+											"pm.environment.set(\"demoWidgetId2\", jsonData.content[0].widgets[1].widgetId);",
+											"pm.environment.set(\"demoWidgetId3\", jsonData.content[0].widgets[2].widgetId);",
+											"pm.environment.set(\"demoWidgetId4\", jsonData.content[0].widgets[3].widgetId);",
+											"pm.environment.set(\"demoWidgetId5\", jsonData.content[0].widgets[4].widgetId);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo filter after demo data generation by Admin",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo filter after demo data generation by Admin\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"1 filter is generated by demo data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.content.length).to.eql(1);",
+											"    });",
+											"    var jsonData = JSON.parse(responseBody);",
+											"pm.environment.set(\"demoFilterId\", jsonData.content[0].id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/{{project_name}}/filter",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"filter"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete demo dashboard",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Delete demo dashboard\", function () {",
+											"        pm.response.to.have.status(200);",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenPM}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard/{{demoDashboardId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard",
+										"{{demoDashboardId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete demo filter",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Delete demo filter\", function () {",
+											"        pm.response.to.have.status(200);",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenPM}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/filter/{{demoFilterId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"filter",
+										"{{demoFilterId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Generate demo data as Member",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Member user can not generate demo data\", function () {",
+											"    pm.response.to.have.status(403);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenMember}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{}"
+								},
+								"url": {
+									"raw": "{{url}}/demo/{{project_name}}/generate",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"demo",
+										"{{project_name}}",
+										"generate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo launches after demo data generation by Member",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo launches after demo data generation by Member\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"No demo launches are generated by Member\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.content.length).to.eql(5);",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/{{project_name}}/launch",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"launch"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo dashboard after demo data generation by Member",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo dashboard after generation by Member\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"No demo dashboards are generated by Member\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.content.length).to.eql(0);",
+											"    });",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo filter after demo data generation by Member",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo filter after demo data generation by Member\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"No demo filters are generated by Member\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.content.length).to.eql(0);",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/{{project_name}}/filter",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"filter"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Generate demo data as PM",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Generate demo data as PM\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"var jsonData = JSON.parse(responseBody);",
+											"pm.environment.set(\"demoDashboardId\", jsonData.dashboardId);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenPM}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{}"
+								},
+								"url": {
+									"raw": "{{url}}/demo/{{project_name}}/generate",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"demo",
+										"{{project_name}}",
+										"generate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo launches after demo data generation by PM",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo launches after demo data generation by PM\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"5 launches are generated by demo data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.content.length).to.eql(10);",
+											"    });",
+											"    var jsonData = JSON.parse(responseBody);",
+											"pm.environment.set(\"demoLaunchId\", jsonData.content[0].id);",
+											"pm.environment.set(\"demoLaunchId2\", jsonData.content[1].id);",
+											"pm.environment.set(\"demoLaunchId3\", jsonData.content[2].id);",
+											"pm.environment.set(\"demoLaunchId4\", jsonData.content[3].id);",
+											"pm.environment.set(\"demoLaunchId5\", jsonData.content[4].id);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/{{project_name}}/launch",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"launch"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo dashboard after demo data generation by PM",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get shared demo dashboard after demo data generation by PM\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"1 dashboard is generated by demo data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.content.length).to.eql(1);",
+											"    });",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo widgets after demo data generation by PM",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo widgets after demo data generation by PM\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"12 widgets are generated by demo data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.content[0].widgets.length).to.eql(12);",
+											"    });",
+											" var jsonData = JSON.parse(responseBody);",
+											"pm.environment.set(\"demoWidgetId\", jsonData.content[0].widgets[0].widgetId);",
+											"pm.environment.set(\"demoWidgetId2\", jsonData.content[0].widgets[1].widgetId);",
+											"pm.environment.set(\"demoWidgetId3\", jsonData.content[0].widgets[2].widgetId);",
+											"pm.environment.set(\"demoWidgetId4\", jsonData.content[0].widgets[3].widgetId);",
+											"pm.environment.set(\"demoWidgetId5\", jsonData.content[0].widgets[4].widgetId);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo filter after demo data generation by PM",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo filter after demo data generation by PM\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"1 filter is generated by demo data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.content.length).to.eql(1);",
+											"    });",
+											"    var jsonData = JSON.parse(responseBody);",
+											"pm.environment.set(\"demoFilterId\", jsonData.content[0].id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/{{project_name}}/filter",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"filter"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Update demo launches. Permissions",
+					"item": [
+						{
+							"name": "Update demo launch as Admin",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Update demo launch as Admin\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"description\": \"Admin updated\",\n    \"attributes\": [\n        {\n            \"key\": \"platform\",\n            \"value\": \"windows server\"\n        },\n        {\n            \"key\": \"build\",\n            \"value\": \"3.22.12.1\"\n        },\n        {\n            \"key\": null,\n            \"value\": \"demo\"\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/launch/{{demoLaunchId}}/update",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"launch",
+										"{{demoLaunchId}}",
+										"update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo launch after updated by Admin",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo launch after updated by Admin\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Demo launch is updated by Admin. Changes are saved\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.description).to.eql(\"Admin updated\");",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/launch/{{demoLaunchId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"launch",
+										"{{demoLaunchId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update demo launch as PM",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Update demo launch as PM\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenPM}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"description\": \"PM updated\",\n    \"attributes\": [\n        {\n            \"key\": \"platform\",\n            \"value\": \"windows server\"\n        },\n        {\n            \"key\": \"build\",\n            \"value\": \"3.22.12.1\"\n        },\n        {\n            \"key\": null,\n            \"value\": \"demo\"\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/launch/{{demoLaunchId}}/update",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"launch",
+										"{{demoLaunchId}}",
+										"update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo launch after updated by PM",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo launch after updated by PM\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Demo launch is updated by PM. Changes are saved\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.description).to.eql(\"PM updated\");",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/launch/{{demoLaunchId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"launch",
+										"{{demoLaunchId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update demo launch as Member",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Update demo launch as Member. Access is denied\", function () {",
+											"    pm.response.to.have.status(403);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenMember}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"description\": \"Member updated\",\n    \"attributes\": [\n        {\n            \"key\": \"platform\",\n            \"value\": \"windows server\"\n        },\n        {\n            \"key\": \"build\",\n            \"value\": \"3.22.12.1\"\n        },\n        {\n            \"key\": null,\n            \"value\": \"demo\"\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/launch/{{demoLaunchId}}/update",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"launch",
+										"{{demoLaunchId}}",
+										"update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo launch after updated by Member. No changes were made",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo launch after updated by Member\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Demo launch is not updated by Member. No changes were made\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.description).to.eql(\"PM updated\");",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/launch/{{demoLaunchId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"launch",
+										"{{demoLaunchId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Update demo dashboard. Permissions",
+					"item": [
+						{
+							"name": "Update demo dashboard as Admin",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Update demo dashboard as Admin\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"DEMO DASHBOARD\",\n    \"description\": \"Admin updated\"\n}"
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard/{{demoDashboardId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard",
+										"{{demoDashboardId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo dashboard after updated by Admin",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo dashboard after updated by Admin\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Demo dashboard is updated by Admin. Changes are saved\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.description).to.eql(\"Admin updated\");",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard/{{demoDashboardId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard",
+										"{{demoDashboardId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update demo dashboard as PM",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Update demo dashboard as PM\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenPM}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"DEMO DASHBOARD\",\n    \"description\": \"PM updated\"\n}"
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard/{{demoDashboardId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard",
+										"{{demoDashboardId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo dashboard after updated by PM",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo dashboard after updated by PM\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Demo dashboard is updated by PM. Changes are saved\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.description).to.eql(\"PM updated\");",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard/{{demoDashboardId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard",
+										"{{demoDashboardId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update demo dashboard as Member",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Update demo dashboard as Member\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenMember}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"DEMO DASHBOARD\",\n    \"description\": \"Member updated\"\n}"
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard/{{demoDashboardId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard",
+										"{{demoDashboardId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo dashboard after updated by Member",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo dashboard after updated by Member\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Demo dashboard is updated by Member. Changes are saved\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.description).to.eql(\"Member updated\");",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard/{{demoDashboardId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard",
+										"{{demoDashboardId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Update demo widget. Permissions",
+					"item": [
+						{
+							"name": "Update demo widget as Admin",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Update demo widget as Admin\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"contentParameters\": {\n        \"contentFields\": [\n            \"statistics$executions$total\",\n            \"statistics$executions$passed\",\n            \"statistics$executions$failed\",\n            \"statistics$executions$skipped\",\n            \"statistics$defects$product_bug$pb001\",\n            \"statistics$defects$automation_bug$ab001\",\n            \"statistics$defects$system_issue$si001\",\n            \"statistics$defects$to_investigate$ti001\"\n        ],\n        \"itemsCount\": 50,\n        \"widgetOptions\": {\n            \"zoom\": false,\n            \"timeline\": \"launch\",\n            \"viewMode\": \"area-spline\"\n        }\n    },\n    \"description\": \"Admin updated\",\n    \"owner\": \"user_Admin_login\",\n    \"name\": \"LAUNCH STATISTICS AREA\",\n    \"widgetType\": \"statisticTrend\",\n    \"filters\": [\n        {\n            \"value\": \"{{demoFilterId}}\",\n            \"name\": \"DEMO_FILTER\"\n        }\n    ],\n    \"filterIds\": [\n        \"{{demoFilterId}}\"\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/widget/{{demoWidgetId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"widget",
+										"{{demoWidgetId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo widget after updated by Admin",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo widget after updated by Admin\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Demo widget is updated by Admin. Changes are saved\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.description).to.eql(\"Admin updated\");",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/widget/{{demoWidgetId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"widget",
+										"{{demoWidgetId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update demo widget as PM",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Update demo widget as PM\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenPM}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"contentParameters\": {\n        \"contentFields\": [\n            \"statistics$executions$total\",\n            \"statistics$executions$passed\",\n            \"statistics$executions$failed\",\n            \"statistics$executions$skipped\",\n            \"statistics$defects$product_bug$pb001\",\n            \"statistics$defects$automation_bug$ab001\",\n            \"statistics$defects$system_issue$si001\",\n            \"statistics$defects$to_investigate$ti001\"\n        ],\n        \"itemsCount\": 50,\n        \"widgetOptions\": {\n            \"zoom\": false,\n            \"timeline\": \"launch\",\n            \"viewMode\": \"area-spline\"\n        }\n    },\n    \"description\": \"PM updated\",\n    \"owner\": \"user_Admin_login\",\n    \"name\": \"LAUNCH STATISTICS AREA\",\n    \"widgetType\": \"statisticTrend\",\n    \"filters\": [\n        {\n            \"value\": \"{{demoFilterId}}\",\n            \"name\": \"DEMO_FILTER\"\n        }\n    ],\n    \"filterIds\": [\n        \"{{demoFilterId}}\"\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/widget/{{demoWidgetId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"widget",
+										"{{demoWidgetId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo widget after updated by PM",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo widget after updated by PM\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Demo widget is updated by PM. Changes are saved\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.description).to.eql(\"PM updated\");",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/widget/{{demoWidgetId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"widget",
+										"{{demoWidgetId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update demo widget as Member",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Update demo widget as Member\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenMember}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"contentParameters\": {\n        \"contentFields\": [\n            \"statistics$executions$total\",\n            \"statistics$executions$passed\",\n            \"statistics$executions$failed\",\n            \"statistics$executions$skipped\",\n            \"statistics$defects$product_bug$pb001\",\n            \"statistics$defects$automation_bug$ab001\",\n            \"statistics$defects$system_issue$si001\",\n            \"statistics$defects$to_investigate$ti001\"\n        ],\n        \"itemsCount\": 50,\n        \"widgetOptions\": {\n            \"zoom\": false,\n            \"timeline\": \"launch\",\n            \"viewMode\": \"area-spline\"\n        }\n    },\n    \"description\": \"Member updated\",\n    \"owner\": \"user_Admin_login\",\n    \"name\": \"LAUNCH STATISTICS AREA\",\n    \"widgetType\": \"statisticTrend\",\n    \"filters\": [\n        {\n            \"value\": \"{{demoFilterId}}\",\n            \"name\": \"DEMO_FILTER\"\n        }\n    ],\n    \"filterIds\": [\n        \"{{demoFilterId}}\"\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/widget/{{demoWidgetId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"widget",
+										"{{demoWidgetId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo widget after updated by Member",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo widget after updated by Member\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Demo widget is updated by Member. Changes are saved\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.description).to.eql(\"Member updated\");",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/widget/{{demoWidgetId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"widget",
+										"{{demoWidgetId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Update demo filter. Permissions",
+					"item": [
+						{
+							"name": "Update demo filter as Admin",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Update demo filter as Admin\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"owner\": \"superadmin\",\n    \"id\": {{demoFilterId}},\n    \"name\": \"DEMO_FILTER\",\n    \"conditions\": [\n        {\n            \"filteringField\": \"attributeValue\",\n            \"condition\": \"has\",\n            \"value\": \"demo\"\n        }\n    ],\n    \"orders\": [\n        {\n            \"sortingColumn\": \"startTime\",\n            \"isAsc\": false\n        }\n    ],\n    \"type\": \"Launch\",\n    \"description\": \"Admin updated\"\n}"
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/filter/{{demoFilterId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"filter",
+										"{{demoFilterId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo filter after updated by Admin",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo filter after updated by Admin\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Demo filter is updated by Admin. Changes are saved\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.description).to.eql(\"Admin updated\");",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/filter/{{demoFilterId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"filter",
+										"{{demoFilterId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update demo filter as PM",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Update demo filter as PM\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenPM}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"owner\": \"superadmin\",\n    \"id\": {{demoFilterId}},\n    \"name\": \"DEMO_FILTER\",\n    \"conditions\": [\n        {\n            \"filteringField\": \"attributeValue\",\n            \"condition\": \"has\",\n            \"value\": \"demo\"\n        }\n    ],\n    \"orders\": [\n        {\n            \"sortingColumn\": \"startTime\",\n            \"isAsc\": false\n        }\n    ],\n    \"type\": \"Launch\",\n    \"description\": \"PM updated\"\n}"
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/filter/{{demoFilterId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"filter",
+										"{{demoFilterId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo filter after updated by PM",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo filter after updated by PM\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Demo filter is updated by PM. Changes are saved\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.description).to.eql(\"PM updated\");",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/filter/{{demoFilterId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"filter",
+										"{{demoFilterId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update demo filter as Member",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Update demo filter as Member\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenMember}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"owner\": \"superadmin\",\n    \"id\": {{demoFilterId}},\n    \"name\": \"DEMO_FILTER\",\n    \"conditions\": [\n        {\n            \"filteringField\": \"attributeValue\",\n            \"condition\": \"has\",\n            \"value\": \"demo\"\n        }\n    ],\n    \"orders\": [\n        {\n            \"sortingColumn\": \"startTime\",\n            \"isAsc\": false\n        }\n    ],\n    \"type\": \"Launch\",\n    \"description\": \"Member updated\"\n}"
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/filter/{{demoFilterId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"filter",
+										"{{demoFilterId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo filter after updated by Member. No changes were made",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo filter after updated by Member\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Demo filter is updated by Member. Changes are saved\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.description).to.eql(\"Member updated\");",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/filter/{{demoFilterId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"filter",
+										"{{demoFilterId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Delete demo launch. Permissions",
+					"item": [
+						{
+							"name": "Member deletes demo launch",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Member deletes demo launch. Access is denied\", function () {",
+											"        pm.response.to.have.status(200);",
+											"    });",
+											"pm.test(\"Member deletes demo launch. Access is denied. Response body contains error message\", function () {",
+											"    pm.expect(pm.response.text()).to.include(\"You do not have enough permissions. You are not launch owner.\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenMember}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"ids\": [\n        {{demoLaunchId}}\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/launch",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"launch"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo launch after deleted by Member. Launch is not deleted",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo launch after deleted by Member. Launch is not deleted\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Get demo launch after deleted by Member. Launch with specified id is not deleted\", function () {",
+											"    var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.id).to.eql(pm.environment.get(\"demoLaunchId\"));",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenMember}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/launch/{{demoLaunchId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"launch",
+										"{{demoLaunchId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PM deletes demo launch",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"PM deletes demo launch\", function () {",
+											"        pm.response.to.have.status(200);",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenPM}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"ids\": [\n        {{demoLaunchId4}}\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/launch",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"launch"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo launch after deleted by PM",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo launch after deleted by PM. Launch is deleted\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenPM}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/launch/{{demoLaunchId4}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"launch",
+										"{{demoLaunchId4}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Admin deletes demo launch",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Admin deletes demo launch\", function () {",
+											"        pm.response.to.have.status(200);",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"ids\": [\n        {{demoLaunchId5}}\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/launch",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"launch"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo launch after deleted by Admin",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo launch after deleted by Admin. Launch is deleted\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/launch/{{demoLaunchId5}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"launch",
+										"{{demoLaunchId5}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Delete demo widget. Permissions",
+					"item": [
+						{
+							"name": "PM deletes demo widget",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"PM deletes demo widget\", function () {",
+											"        pm.response.to.have.status(200);",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenPM}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard/{{demoDashboardId}}/{{demoWidgetId4}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard",
+										"{{demoDashboardId}}",
+										"{{demoWidgetId4}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo widget after deleted by PM",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo dashboard\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Demo widget deleted by PM is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[0].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId4\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by PM is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[1].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId4\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by PM is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[2].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId4\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by PM is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[3].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId4\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by PM is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[4].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId4\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by PM is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[5].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId4\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by PM is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[6].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId4\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by PM is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[7].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId4\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by PM is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[8].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId4\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by PM is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[9].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId4\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by PM is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[10].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId4\"));",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenPM}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard/{{demoDashboardId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard",
+										"{{demoDashboardId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Admin deletes demo widget",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Admin deletes demo widget\", function () {",
+											"        pm.response.to.have.status(200);",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard/{{demoDashboardId}}/{{demoWidgetId5}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard",
+										"{{demoDashboardId}}",
+										"{{demoWidgetId5}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo widget after deleted by Admin",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo dashboard\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Demo widget deleted by Admin is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[0].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId5\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by Admin is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[1].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId5\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by Admin is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[2].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId5\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by Admin is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[3].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId5\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by Admin is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[4].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId5\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by Admin is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[5].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId5\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by Admin is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[6].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId5\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by Admin is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[7].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId5\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by Admin is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[8].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId5\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by Admin is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[9].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId5\"));",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard/{{demoDashboardId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard",
+										"{{demoDashboardId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Member deletes demo widget",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Member deletes demo widget\", function () {",
+											"        pm.response.to.have.status(200);",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenMember}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard/{{demoDashboardId}}/{{demoWidgetId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard",
+										"{{demoDashboardId}}",
+										"{{demoWidgetId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo widget after deleted by Member. Widget is not deleted",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo dashboard\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Demo widget deleted by Member is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[0].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by Member is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[1].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by Member is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[2].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by Member is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[3].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by Member is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[4].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by Member is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[5].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by Member is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[6].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by Member is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[7].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId\"));",
+											"    });",
+											"    pm.test(\"Demo widget deleted by Member is not displayed on demo dashboard\", function () {",
+											"   var jsonData = pm.response.json();",
+											"   pm.expect(jsonData.widgets[8].widgetId).to.not.eql(pm.environment.get(\"demoWidgetId\"));",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenMember}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard/{{demoDashboardId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard",
+										"{{demoDashboardId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Delete demo filter by Member",
+					"item": [
+						{
+							"name": "Member deletes demo filter",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Member deletes demo filter\", function () {",
+											"        pm.response.to.have.status(200);",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenMember}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/filter/{{demoFilterId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"filter",
+										"{{demoFilterId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo filter after deleted by Member. Filter is deleted",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo filter after deleted by Member. Filter is deleted\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenMember}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/filter/{{demoFilterId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"filter",
+										"{{demoFilterId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Delete demo dashboard by Member",
+					"item": [
+						{
+							"name": "Member deletes demo dashboard",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Member deletes demo dashboard\", function () {",
+											"        pm.response.to.have.status(200);",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenMember}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard/{{demoDashboardId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard",
+										"{{demoDashboardId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo dashboard after deleted by Member. Dashboard is deleted",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo dashboard after deleted by Member. Dashboard is deleted\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenMember}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard/{{demoDashboardId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard",
+										"{{demoDashboardId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Generate demo data with createDashboard:true/false+ Admin deletes dashboard,filter",
+					"item": [
+						{
+							"name": "Generate demo data with createDashboard:true",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Generate demo data with createDashboard:true\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"createDashboard\": true\n  }"
+								},
+								"url": {
+									"raw": "{{url}}/demo/{{project_name}}/generate",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"demo",
+										"{{project_name}}",
+										"generate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo dashboard after demo data with createDashboard:true generated",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo dashboard after demo data with createDashboard:true is generated\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"1 dashboard is generated by demo data with createDashboard:true\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.content.length).to.eql(1);",
+											"    });",
+											"     var jsonData = JSON.parse(responseBody);",
+											"pm.environment.set(\"demoDashboardId\", jsonData.content[0].id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Admin deletes demo dashboard",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Admin deletes demo dashboard\", function () {",
+											"        pm.response.to.have.status(200);",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard/{{demoDashboardId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard",
+										"{{demoDashboardId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo dashboard after deleted by Admin. Dashboard is deleted",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo dashboard after deleted by Admin. Dashboard is deleted\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard/{{demoDashboardId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard",
+										"{{demoDashboardId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Generate demo data with createDashboard:false",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Generate demo data with createDashboard:false\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"createDashboard\": false\n  }"
+								},
+								"url": {
+									"raw": "{{url}}/demo/{{project_name}}/generate",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"demo",
+										"{{project_name}}",
+										"generate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo dashboard after demo data with createDashboard:false generated",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get shared demo dashboard after demo data with createDashboard:false is generated\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"No dashboards are generated by demo data with createDashboard:false\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.content.length).to.eql(0);",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo filter after demo data generation",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo filter after demo data generation\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"1 filter is generated by demo data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.content.length).to.eql(1);",
+											"    });",
+											"    var jsonData = JSON.parse(responseBody);",
+											"pm.environment.set(\"demoFilterId\", jsonData.content[0].id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/{{project_name}}/filter",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"filter"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Admin deletes demo filter",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Admin deletes demo filter\", function () {",
+											"        pm.response.to.have.status(200);",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/filter/{{demoFilterId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"filter",
+										"{{demoFilterId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo filter after deleted by Admin. Filter is deleted",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo filter after deleted by Admin. Filter is deleted\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenAdmin}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/filter/{{demoFilterId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"filter",
+										"{{demoFilterId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Generate demo data with createDashboard:true/false+ PM deletes dashboard,filter",
+					"item": [
+						{
+							"name": "Generate demo data with createDashboard:true",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Generate demo data with createDashboard:true\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenPM}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"createDashboard\": true\n  }"
+								},
+								"url": {
+									"raw": "{{url}}/demo/{{project_name}}/generate",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"demo",
+										"{{project_name}}",
+										"generate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo dashboard after demo data with createDashboard:true generated",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo dashboard after demo data with createDashboard:true is generated\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"1 dashboard is generated by demo data with createDashboard:true\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.content.length).to.eql(1);",
+											"    });",
+											"     var jsonData = JSON.parse(responseBody);",
+											"pm.environment.set(\"demoDashboardId\", jsonData.content[0].id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenPM}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PM deletes demo dashboard",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"PM deletes demo dashboard\", function () {",
+											"        pm.response.to.have.status(200);",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenPM}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard/{{demoDashboardId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard",
+										"{{demoDashboardId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo dashboard after deleted by PM. Dashboard is deleted",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo dashboard after deleted by PM. Dashboard is deleted\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenPM}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard/{{demoDashboardId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard",
+										"{{demoDashboardId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Generate demo data with createDashboard:false",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Generate demo data with createDashboard:false\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenPM}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"createDashboard\": false\n  }"
+								},
+								"url": {
+									"raw": "{{url}}/demo/{{project_name}}/generate",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"demo",
+										"{{project_name}}",
+										"generate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo dashboard after demo data with createDashboard:false generated",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get shared demo dashboard after demo data with createDashboard:false is generated\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"No dashboards are generated by demo data with createDashboard:false\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.content.length).to.eql(0);",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenPM}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/{{project_name}}/dashboard",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"dashboard"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo filter after demo data generation",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo filter after demo data generation\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"1 filter is generated by demo data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.content.length).to.eql(1);",
+											"    });",
+											"    var jsonData = JSON.parse(responseBody);",
+											"pm.environment.set(\"demoFilterId\", jsonData.content[0].id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenPM}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/{{project_name}}/filter",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"filter"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PM deletes demo filter",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"PM deletes demo filter\", function () {",
+											"        pm.response.to.have.status(200);",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenPM}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/filter/{{demoFilterId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"filter",
+										"{{demoFilterId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get demo filter after deleted by PM. Filter is deleted",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get demo filter after deleted by PM. Filter is deleted\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{tokenPM}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{project_name}}/filter/{{demoFilterId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{project_name}}",
+										"filter",
+										"{{demoFilterId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Postconditions",
+					"item": [
+						{
+							"name": "Delete user",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Delete user Admin\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"date\", new Date());",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "",
+										"type": "text",
+										"value": "",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"ids\": [\r\n    {{user_Admin_id}}\r\n  ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/user",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete user",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Delete user PM\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"date\", new Date());",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "",
+										"type": "text",
+										"value": "",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"ids\": [\r\n    {{user_PM_id}}\r\n  ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/user",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete user",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Delete user Member\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"date\", new Date());",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "",
+										"type": "text",
+										"value": "",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"ids\": [\r\n    {{user_member_id}}\r\n  ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/user",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete project",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Delete project\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"date\", new Date());",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "",
+										"type": "text",
+										"value": "",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"ids\": [\r\n    {{projectId}}\r\n  ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/project",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"project"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
 			"event": [
 				{
 					"listen": "prerequest",
 					"script": {
+						"type": "text/javascript",
 						"exec": [
-							"pm.environment.set(\"rp.attributes\", \"testTwoKey:testTwoValue;testTwoValue2\");\r",
-							"pm.environment.set(\"rp.testCaseId\", \"TestTwoTestCaseId\");\r",
-							"pm.environment.set(\"rp.status\", \"skipped\");\r",
-							"console.log('test', 'Request two LOG');\r",
-							"console.info('test', 'Request two INFO log');\r",
-							"console.debug('test', 'Request two DEBUG log');\r",
-							"console.error('test', 'Request two ERROR log');\r",
-							"console.warn('test', 'Request two WARN log');"
-						],
-						"type": "text/javascript"
+							""
+						]
 					}
 				},
 				{
 					"listen": "test",
 					"script": {
+						"type": "text/javascript",
 						"exec": [
-							"pm.test(\"Test, status code is 400\", function () {\r",
-							"    pm.response.to.have.status(400);\r",
-							"});"
-						],
-						"type": "text/javascript"
+							""
+						]
 					}
 				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://ghgvhgvhgvhpostman-echo.com",
-					"protocol": "https",
-					"host": [
-						"ghgvhgvhgvhpostman-echo",
-						"com"
-					]
-				},
-				"description": "Description for test two"
-			},
-			"response": []
-		},
-		{
-			"name": "Test Three",
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"exec": [
-							"pm.environment.set(\"rp.attributes\", \"testThreeKey:testThreeValue;testThreeValue2\");\r",
-							"pm.environment.set(\"rp.testCaseId\", \"TestThreeTestCaseId\");\r",
-							"pm.environment.set(\"rp.status\", \"skipped\");\r",
-							"console.log('test', 'Request two LOG');\r",
-							"console.info('test', 'Request two INFO log');\r",
-							"console.debug('test', 'Request two DEBUG log');\r",
-							"console.error('test', 'Request two ERROR log');\r",
-							"console.warn('test', 'Request two WARN log');"
-						],
-						"type": "text/javascript"
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Body contains string\",() => {\r",
-							"  pm.expect(pm.response.text()).to.include(\"Intro to Postman\");\r",
-							"});\r",
-							"pm.test(\"Response time is less than 200ms\", () => {\r",
-							"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://learning.postman.com/",
-					"protocol": "https",
-					"host": [
-						"learning",
-						"postman",
-						"com"
-					],
-					"path": [
-						""
-					]
-				},
-				"description": "Description for test three"
-			},
-			"response": []
+			]
 		}
 	],
 	"event": [
@@ -177,16 +5215,7 @@
 			"script": {
 				"type": "text/javascript",
 				"exec": [
-					"console.log('suite', 'LOG');",
-					"console.error('suite', 'ERROR LOG');",
-					"console.debug('suite', 'DEBUG LOG');",
-					"console.warn('suite', 'WARN LOG');",
-					"console.info('suite', 'INFO LOG');",
-					"console.log('launch', 'LOG');",
-					"console.error('launch', 'ERROR LOG');",
-					"console.debug('launch', 'DEBUG LOG');",
-					"console.warn('launch', 'WARN LOG');",
-					"console.info('launch', 'INFO LOG');"
+					""
 				]
 			}
 		},
@@ -198,24 +5227,6 @@
 					""
 				]
 			}
-		}
-	],
-	"variable": [
-		{
-			"key": "rp.attributes",
-			"value": "suiteKeyOne:suiteValueOne"
-		},
-		{
-			"key": "rp.testCaseId",
-			"value": "SuiteTestCaseId"
-		},
-		{
-			"key": "rp.launchStatus",
-			"value": "skipped"
-		},
-		{
-			"key": "rp.status",
-			"value": "skipped"
 		}
 	]
 }

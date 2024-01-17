@@ -39,3 +39,9 @@ jobs:
       - name: Run tests without RP
         working-directory: ./example-postman
         run: npm test -- --skip-rp
+        env:
+          TEST_USER_NAME: ${{ secrets.TEST_USER_NAME }}
+          TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+          TEST_URL: ${{ secrets.TEST_URL }}
+          TEST_HOST: ${{ secrets.TEST_HOST }}
+          TEST_PORT: ${{ secrets.TEST_PORT }}
