@@ -4,7 +4,7 @@ const SKIP_RP_FLAG = '--skip-rp';
 const hasSkipRPFlag = process.argv.indexOf(SKIP_RP_FLAG) !== -1;
 
 hasSkipRPFlag
-  ? newman.run({ collection: './collections/Example.postman_collection.json' })
+  ? newman.run({ collection: './collections/Example.postman_collection.json', reporters: 'cli' })
   : newman.run(
       {
         collection: './collections/Example.postman_collection.json',
