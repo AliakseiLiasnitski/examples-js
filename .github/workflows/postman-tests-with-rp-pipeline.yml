@@ -38,13 +38,12 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
-      - name: Move to example-postman folder
-        run: cd example-postman
-
       - name: Install of node dependencies
+        working-directory: ./example-postman
         run: npm install
 
       - name: Run tests with RP
+        working-directory: ./example-postman
         run: npm test
         env:
           RP_ENDPOINT: ${{ secrets.RP_ENDPOINT }}
