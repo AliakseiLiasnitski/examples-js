@@ -17,6 +17,7 @@ on:
   push:
     paths:
       - example-postman/**
+      - .github/workflows/postman-tests-with-rp-pipeline.yml
       - '!example-postman/CHANGELOG.md'
   pull_request:
     branches:
