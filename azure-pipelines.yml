@@ -4,8 +4,14 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
 trigger:
-- main
-- feat/postman-tests-pipeline
+  branches:
+    include:
+    - '*'
+  paths:
+    include:
+    - example-postman/**
+    exclude:
+    - example-postman/CHANGELOG.md
 
 pool:
   vmImage: ubuntu-latest
