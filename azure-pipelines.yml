@@ -13,8 +13,8 @@ pool:
 stages:
 - stage: RPStage
   variables:
-  - template: rp-secrets.yml
-  
+  - group: rp-secrets
+
   jobs:
   - job: run-postman-test-with-rp
     steps:
