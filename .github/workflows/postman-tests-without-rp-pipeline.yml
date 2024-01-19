@@ -1,0 +1,47 @@
+# Copyright 2023 EPAM Systems
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: postman-tests-without-rp-pipeline
+
+on:
+  push:
+    paths:
+      - example-postman/**
+      - .github/workflows/postman-tests-without-rp-pipeline.yml
+      - '!example-postman/CHANGELOG.md'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install of node dependencies
+        working-directory: ./example-postman
+        run: npm install
+
+      - name: Run tests without RP
+        working-directory: ./example-postman
+        run: npm test -- --skip-rp
+        env:
+          TEST_USER_NAME: ${{ secrets.TEST_USER_NAME }}
+          TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+          TEST_URL: ${{ secrets.TEST_URL }}
+          TEST_HOST: ${{ secrets.TEST_HOST }}
+          TEST_PORT: ${{ secrets.TEST_PORT }}
