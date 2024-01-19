@@ -1,0 +1,44 @@
+# Node.js
+# Build a general Node.js project with npm.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+trigger:
+  branches:
+    include:
+    - '*'
+  paths:
+    include:
+    - example-postman/**
+    exclude:
+    - example-postman/CHANGELOG.md
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+- group: rp_secrets
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '20.x'
+  displayName: 'Install Node.js'
+
+- script: npm install
+  workingDirectory: ./example-postman
+  displayName: 'npm install'
+
+- script: npm test
+  workingDirectory: ./example-postman
+  displayName: 'run tests'
+  env:
+    RP_ENDPOINT: $(RP_ENDPOINT)
+    RP_API_KEY: $(RP_API_KEY)
+    RP_PROJECT_NAME: $(RP_PROJECT_NAME)
+    RP_LAUNCH_NAME: $(RP_LAUNCH_NAME)
+    TEST_USER_NAME: $(TEST_USER_NAME)
+    TEST_USER_PASSWORD: $(TEST_USER_PASSWORD)
+    TEST_URL: $(TEST_URL)
+    TEST_HOST: $(TEST_HOST)
+    TEST_PORT: $(TEST_PORT)
