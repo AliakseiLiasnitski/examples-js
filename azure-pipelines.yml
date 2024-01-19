@@ -13,10 +13,10 @@ pool:
 stages:
 - stage: RPStage
   variables:
-  - group: rp-secrets
+  - group: rp_secrets
 
   jobs:
-  - job: run-postman-test-with-rp
+  - job: run_postman_test_with_rp
     steps:
     - task: NodeTool@0
       inputs:
